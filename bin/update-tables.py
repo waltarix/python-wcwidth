@@ -58,7 +58,7 @@ TableDef = collections.namedtuple('table', ['version', 'date', 'values'])
 
 def main():
     """Update east-asian, combining and zero width tables."""
-    versions = get_unicode_versions()
+    versions = ['14.0.0'] # get_unicode_versions()
     do_east_asian(versions)
     do_zero_width(versions)
     do_rst_file_update()
@@ -116,8 +116,7 @@ def do_east_asian(versions):
     for version in versions:
         fin = os.path.join(PATH_DATA, 'EastAsianWidth-{version}.txt')
         fout = os.path.join(PATH_CODE, 'table_wide.py')
-        url = ('http://www.unicode.org/Public/{version}/'
-               'ucd/EastAsianWidth.txt')
+        url = ('https://github.com/waltarix/localedata/releases/download/{version}-r2/EastAsianWidth.txt')
         try:
             do_retrieve(url=url.format(version=version),
                         fname=fin.format(version=version))
@@ -209,12 +208,6 @@ def parse_east_asian(fname, properties=(u'W', u'F',)):
     version, date, values = None, None, []
     for line in open(fname, 'rb'):
         uline = line.decode('utf-8')
-        if version is None:
-            version = uline.split(None, 1)[1].rstrip()
-            continue
-        if date is None:
-            date = uline.split(':', 1)[1].rstrip()
-            continue
         if uline.startswith('#') or not uline.lstrip():
             continue
         addrs, details = uline.split(';', 1)
