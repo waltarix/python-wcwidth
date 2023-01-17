@@ -129,10 +129,10 @@ def test_combining_cafe():
 
 
 def test_combining_enclosing():
-    u"""CYRILLIC CAPITAL LETTER A + COMBINING CYRILLIC HUNDRED THOUSANDS SIGN is А҈ of length 1."""
+    u"""CYRILLIC CAPITAL LETTER A + COMBINING CYRILLIC HUNDRED THOUSANDS SIGN is А҈ of length 2."""
     phrase = u"\u0410\u0488"
-    expect_length_each = (1, 0)
-    expect_length_phrase = 1
+    expect_length_each = (2, 0)
+    expect_length_phrase = 2
 
     # exercise,
     length_each = tuple(map(wcwidth.wcwidth, phrase))
