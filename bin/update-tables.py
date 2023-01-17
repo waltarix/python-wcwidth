@@ -38,9 +38,9 @@ import urllib3.util
 import dateutil.parser
 
 URL_UNICODE_DERIVED_AGE = 'https://www.unicode.org/Public/UCD/latest/ucd/DerivedAge.txt'
-URL_EASTASIAN_WIDTH = 'https://www.unicode.org/Public/{version}/ucd/EastAsianWidth.txt'
+URL_EASTASIAN_WIDTH = 'https://github.com/waltarix/localedata/releases/download/{version}-r2/EastAsianWidth.txt'
 URL_DERIVED_CATEGORY = 'https://www.unicode.org/Public/{version}/ucd/extracted/DerivedGeneralCategory.txt'
-EXCLUDE_VERSIONS = ['2.0.0', '2.1.2', '3.0.0', '3.1.0', '3.2.0', '4.0.0']
+INCLUDE_VERSIONS = ['15.0.0']
 
 PATH_UP = os.path.relpath(os.path.join(os.path.dirname(__file__), os.path.pardir))
 PATH_DATA = os.path.join(PATH_UP, 'data')
@@ -212,7 +212,7 @@ def fetch_unicode_versions() -> list[UnicodeVersion]:
         for line in f:
             if match := re.match(pattern, line):
                 version = match.group(1)
-                if version not in EXCLUDE_VERSIONS:
+                if version in INCLUDE_VERSIONS:
                     versions.append(UnicodeVersion.parse(version))
     versions.sort()
     return versions
@@ -392,9 +392,12 @@ def is_url_newer(url: str, fname: str) -> bool:
         session = get_http_session()
         resp = session.head(url, timeout=CONNECT_TIMEOUT)
         resp.raise_for_status()
-        remote_url_dt = dateutil.parser.parse(resp.headers['Last-Modified']).astimezone()
-        local_file_dt = datetime.datetime.fromtimestamp(os.path.getmtime(fname)).astimezone()
-        return remote_url_dt > local_file_dt
+        try:
+            remote_url_dt = dateutil.parser.parse(resp.headers['Last-Modified']).astimezone()
+            local_file_dt = datetime.datetime.fromtimestamp(os.path.getmtime(fname)).astimezone()
+            return remote_url_dt > local_file_dt
+        except Exception:
+            pass
     return False
 
 

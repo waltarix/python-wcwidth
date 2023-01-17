@@ -68,6 +68,7 @@ import sys
 import warnings
 
 # local
+from .wcwidth9 import wcwidth9_width
 from .table_wide import WIDE_EASTASIAN
 from .table_zero import ZERO_WIDTH
 from .unicode_versions import list_versions
@@ -241,8 +242,13 @@ def wcswidth(pwcs, n=None, unicode_version='auto'):
     # pylint: disable=C0103
     #         Invalid argument name "n"
 
-    end = len(pwcs) if n is None else n
-    idx = slice(0, end)
+    if n is None:
+        width = 0
+        for char in pwcs:
+            width += wcwidth9_width(ord(char))
+        return width
+
+    idx = slice(0, n)
     width = 0
     for char in pwcs[idx]:
         wcw = wcwidth(char, unicode_version)
