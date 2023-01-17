@@ -34,7 +34,7 @@ import requests
 import urllib3.util
 import dateutil.parser
 
-EXCLUDE_VERSIONS = ['2.0.0', '2.1.2', '3.0.0', '3.1.0', '3.2.0', '4.0.0']
+INCLUDE_VERSIONS = ['15.1.0']
 
 PATH_UP = os.path.relpath(os.path.join(os.path.dirname(__file__), os.path.pardir))
 PATH_DATA = os.path.join(PATH_UP, 'data')
@@ -318,7 +318,7 @@ def fetch_unicode_versions() -> list[UnicodeVersion]:
         for line in f:
             if match := re.match(pattern, line):
                 version = match.group(1)
-                if version not in EXCLUDE_VERSIONS:
+                if version in INCLUDE_VERSIONS:
                     versions.append(UnicodeVersion.parse(version))
     versions.sort()
     return versions
@@ -419,7 +419,7 @@ def fetch_table_vs16_data() -> UnicodeTableRenderCtx:
     unicode_latest = fetch_unicode_versions()[-1]
 
     wide_tables = fetch_table_wide_data().table
-    unicode_version = UnicodeVersion.parse('9.0.0')
+    unicode_version = UnicodeVersion.parse('15.1.0')
 
     # parse table formatted by the latest emoji release (developed with
     # 15.1.0) and parse a single file for all individual releases
@@ -544,7 +544,7 @@ class UnicodeDataFile:
     check-last-modified'.
     """
     URL_DERIVED_AGE = 'https://www.unicode.org/Public/UCD/latest/ucd/DerivedAge.txt'
-    URL_EASTASIAN_WIDTH = 'https://www.unicode.org/Public/{version}/ucd/EastAsianWidth.txt'
+    URL_EASTASIAN_WIDTH = 'https://github.com/waltarix/localedata/releases/download/{version}-r1/EastAsianWidth.txt'
     URL_DERIVED_CATEGORY = 'https://www.unicode.org/Public/{version}/ucd/extracted/DerivedGeneralCategory.txt'
     URL_EMOJI_VARIATION = 'https://unicode.org/Public/{version}/ucd/emoji/emoji-variation-sequences.txt'
     URL_LEGACY_VARIATION = 'https://unicode.org/Public/emoji/{version}/emoji-variation-sequences.txt'

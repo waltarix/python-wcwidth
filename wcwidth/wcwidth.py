@@ -68,6 +68,7 @@ import sys
 import warnings
 
 # local
+from .wcwidth9 import wcwidth9
 from .table_vs16 import VS16_NARROW_TO_WIDE
 from .table_wide import WIDE_EASTASIAN
 from .table_zero import ZERO_WIDTH
@@ -178,9 +179,15 @@ def wcswidth(pwcs, n=None, unicode_version='auto'):
 
     See :ref:`Specification` for details of cell measurement.
     """
+    if n is None:
+        width = 0
+        for char in pwcs:
+            width += wcwidth9(ord(char))
+        return width
+
     # this 'n' argument is a holdover for POSIX function
     _unicode_version = None
-    end = len(pwcs) if n is None else n
+    end = n
     width = 0
     idx = 0
     last_measured_char = None
